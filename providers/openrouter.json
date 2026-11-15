@@ -1,0 +1,69 @@
+{
+  "id": "openrouter",
+  "displayName": "OpenRouter",
+  "rev": 1,
+  "docsUrl": "https://openrouter.ai/docs/api-reference/overview",
+  "capabilities": {
+    "models": true,
+    "chat": true,
+    "usage": true,
+    "balance": true,
+    "keyUsage": true
+  },
+  "usage": {
+    "syncMode": "native",
+    "managementKeyRequired": true,
+    "granularity": "daily",
+    "bucketTimezone": "utc",
+    "reportingLagHours": null,
+    "revisionWindowDays": 1,
+    "backfillMaxDays": 30,
+    "syncThrottleMinutes": 5,
+    "pagination": {
+      "kind": "none",
+      "maxPages": 1
+    }
+  },
+  "metrics": {
+    "inputTokens": {
+      "availability": "reported"
+    },
+    "outputTokens": {
+      "availability": "reported"
+    },
+    "cachedTokens": {
+      "availability": "reported"
+    },
+    "reasoningTokens": {
+      "availability": "reported"
+    },
+    "requestCount": {
+      "availability": "reported"
+    },
+    "costUsd": {
+      "availability": "reported"
+    },
+    "currency": {
+      "availability": "reported"
+    },
+    "latencyMs": {
+      "availability": "client_only"
+    },
+    "status": {
+      "availability": "client_only"
+    }
+  },
+  "actions": {
+    "models": "enabled",
+    "compare": "enabled",
+    "balance": "visible"
+  },
+  "adapter": {
+    "mode": "native",
+    "usageSource": "openrouter-activity"
+  },
+  "setup": {
+    "summaryKey": "providers.setupOpenRouter"
+  },
+  "notes": "/activity returns completed UTC days only, so today is never available. 30-day window. Per-key attribution needs the management key (key metadata is a second request). Reasoning tokens are reported."
+}

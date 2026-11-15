@@ -1,0 +1,73 @@
+{
+  "id": "huggingface",
+  "displayName": "Hugging Face",
+  "rev": 1,
+  "docsUrl": "https://huggingface.co/docs/inference-providers/index",
+  "capabilities": {
+    "models": true,
+    "chat": true,
+    "usage": true,
+    "balance": false,
+    "keyUsage": false
+  },
+  "usage": {
+    "syncMode": "enterprise-org",
+    "managementKeyRequired": false,
+    "granularity": "daily",
+    "bucketTimezone": "utc",
+    "reportingLagHours": 2,
+    "revisionWindowDays": 1,
+    "backfillMaxDays": 31,
+    "syncThrottleMinutes": 5,
+    "pagination": {
+      "kind": "cursor",
+      "maxPages": 10
+    }
+  },
+  "metrics": {
+    "inputTokens": {
+      "availability": "reported"
+    },
+    "outputTokens": {
+      "availability": "reported"
+    },
+    "cachedTokens": {
+      "availability": "not_reported",
+      "reason": "chat_only"
+    },
+    "reasoningTokens": {
+      "availability": "not_reported",
+      "reason": "provider_omits"
+    },
+    "requestCount": {
+      "availability": "not_reported",
+      "reason": "provider_omits"
+    },
+    "costUsd": {
+      "availability": "reported"
+    },
+    "currency": {
+      "availability": "estimated",
+      "reason": "assumed_usd"
+    },
+    "latencyMs": {
+      "availability": "client_only"
+    },
+    "status": {
+      "availability": "client_only"
+    }
+  },
+  "actions": {
+    "models": "enabled",
+    "compare": "enabled",
+    "balance": "hidden"
+  },
+  "adapter": {
+    "mode": "native",
+    "usageSource": "huggingface-activity"
+  },
+  "setup": {
+    "summaryKey": "providers.setupHuggingFace"
+  },
+  "notes": "Requires an Enterprise+ org and org.billing.read; the org id is stored in account config. Daily rows, ~2 h reporting lag, 31-day windows. Cached tokens exist for chat rows only."
+}

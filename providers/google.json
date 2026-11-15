@@ -1,0 +1,76 @@
+{
+  "id": "google",
+  "displayName": "Google Gemini",
+  "rev": 1,
+  "docsUrl": "https://ai.google.dev/gemini-api/docs/tokens",
+  "capabilities": {
+    "models": true,
+    "chat": true,
+    "usage": false,
+    "balance": false,
+    "keyUsage": false
+  },
+  "usage": {
+    "syncMode": "none",
+    "managementKeyRequired": false,
+    "granularity": "none",
+    "bucketTimezone": "utc",
+    "reportingLagHours": null,
+    "revisionWindowDays": 0,
+    "backfillMaxDays": 0,
+    "syncThrottleMinutes": 5,
+    "pagination": {
+      "kind": "none",
+      "maxPages": 1
+    }
+  },
+  "metrics": {
+    "inputTokens": {
+      "availability": "not_supported",
+      "reason": "no_api"
+    },
+    "outputTokens": {
+      "availability": "not_supported",
+      "reason": "no_api"
+    },
+    "cachedTokens": {
+      "availability": "not_supported",
+      "reason": "no_api"
+    },
+    "reasoningTokens": {
+      "availability": "not_supported",
+      "reason": "no_api"
+    },
+    "requestCount": {
+      "availability": "not_supported",
+      "reason": "no_api"
+    },
+    "costUsd": {
+      "availability": "not_supported",
+      "reason": "no_api"
+    },
+    "currency": {
+      "availability": "not_supported",
+      "reason": "no_api"
+    },
+    "latencyMs": {
+      "availability": "client_only"
+    },
+    "status": {
+      "availability": "client_only"
+    }
+  },
+  "actions": {
+    "models": "enabled",
+    "compare": "enabled",
+    "balance": "hidden"
+  },
+  "adapter": {
+    "mode": "native",
+    "usageSource": null
+  },
+  "setup": {
+    "summaryKey": "providers.setupGoogle"
+  },
+  "notes": "No account usage or cost API. Only app-sent completions are recorded, from usageMetadata on each response."
+}

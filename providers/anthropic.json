@@ -1,0 +1,72 @@
+{
+  "id": "anthropic",
+  "displayName": "Anthropic",
+  "rev": 1,
+  "docsUrl": "https://docs.anthropic.com/en/api/usage-cost-api",
+  "capabilities": {
+    "models": true,
+    "chat": true,
+    "usage": true,
+    "balance": false,
+    "keyUsage": true
+  },
+  "usage": {
+    "syncMode": "admin-key",
+    "managementKeyRequired": true,
+    "granularity": "daily",
+    "bucketTimezone": "utc",
+    "reportingLagHours": null,
+    "revisionWindowDays": 1,
+    "backfillMaxDays": 31,
+    "syncThrottleMinutes": 5,
+    "pagination": {
+      "kind": "cursor",
+      "maxPages": 12
+    }
+  },
+  "metrics": {
+    "inputTokens": {
+      "availability": "reported"
+    },
+    "outputTokens": {
+      "availability": "reported"
+    },
+    "cachedTokens": {
+      "availability": "reported"
+    },
+    "reasoningTokens": {
+      "availability": "not_reported",
+      "reason": "provider_omits"
+    },
+    "requestCount": {
+      "availability": "not_reported",
+      "reason": "provider_omits"
+    },
+    "costUsd": {
+      "availability": "reported",
+      "allocation": "by_token_share"
+    },
+    "currency": {
+      "availability": "reported"
+    },
+    "latencyMs": {
+      "availability": "client_only"
+    },
+    "status": {
+      "availability": "client_only"
+    }
+  },
+  "actions": {
+    "models": "enabled",
+    "compare": "enabled",
+    "balance": "hidden"
+  },
+  "adapter": {
+    "mode": "native",
+    "usageSource": "anthropic-activity"
+  },
+  "setup": {
+    "summaryKey": "providers.setupAnthropic"
+  },
+  "notes": "Admin key (sk-ant-admin01-). No request count at all: request totals must stay unavailable, never inferred. Cost report is 1d only; unmatched cost is shared across rows by token volume. 31-day page."
+}

@@ -1,0 +1,69 @@
+{
+  "note": "Provider ids the app registers (src/data/providers/index.ts). A profile whose id is not listed here is rejected.",
+  "providers": [
+    {
+      "id": "anthropic",
+      "displayName": "Anthropic"
+    },
+    {
+      "id": "cloudflare",
+      "displayName": "Cloudflare Workers AI"
+    },
+    {
+      "id": "deepseek",
+      "displayName": "DeepSeek"
+    },
+    {
+      "id": "google",
+      "displayName": "Google Gemini"
+    },
+    {
+      "id": "huggingface",
+      "displayName": "Hugging Face"
+    },
+    {
+      "id": "litellm",
+      "displayName": "LiteLLM"
+    },
+    {
+      "id": "novita",
+      "displayName": "Novita AI"
+    },
+    {
+      "id": "openai-compatible",
+      "displayName": "OpenAI-compatible"
+    },
+    {
+      "id": "openai",
+      "displayName": "OpenAI"
+    },
+    {
+      "id": "openrouter",
+      "displayName": "OpenRouter"
+    },
+    {
+      "id": "poe",
+      "displayName": "Poe"
+    },
+    {
+      "id": "replicate",
+      "displayName": "Replicate"
+    },
+    {
+      "id": "siliconflow",
+      "displayName": "SiliconFlow"
+    },
+    {
+      "id": "together",
+      "displayName": "Together AI"
+    },
+    {
+      "id": "trustedrouter",
+      "displayName": "TrustedRouter"
+    },
+    {
+      "id": "vercel",
+      "displayName": "Vercel AI Gateway"
+    }
+  ]
+}

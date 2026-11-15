@@ -1,0 +1,12 @@
+node_modules/
+# Generated artifacts: `npm run build` / `npm run sign` recreate them.
+build/
+public/manifest.json
+# Signing keys never live in git. Production lives in the Actions secret
+# MANIFEST_SIGNING_KEY; the dev key lives in .keys/ on this machine.
+.keys/
+*.key
+.DS_Store
+# Local secrets (signing key JSON). Production lives in the Actions secret and
+# the password manager; this file is a convenience copy on this machine only.
+.env

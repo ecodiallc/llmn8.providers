@@ -1,0 +1,80 @@
+{
+  "id": "replicate",
+  "displayName": "Replicate",
+  "rev": 1,
+  "docsUrl": "https://replicate.com/docs/reference/http",
+  "capabilities": {
+    "models": false,
+    "chat": false,
+    "usage": true,
+    "balance": false,
+    "keyUsage": false
+  },
+  "usage": {
+    "syncMode": "native",
+    "managementKeyRequired": false,
+    "granularity": "per-request",
+    "bucketTimezone": "utc",
+    "reportingLagHours": null,
+    "revisionWindowDays": 0,
+    "backfillMaxDays": 30,
+    "syncThrottleMinutes": 5,
+    "pagination": {
+      "kind": "cursor",
+      "maxPages": 20
+    }
+  },
+  "metrics": {
+    "inputTokens": {
+      "availability": "not_supported",
+      "reason": "no_api"
+    },
+    "outputTokens": {
+      "availability": "not_supported",
+      "reason": "no_api"
+    },
+    "cachedTokens": {
+      "availability": "not_supported",
+      "reason": "no_api"
+    },
+    "reasoningTokens": {
+      "availability": "not_supported",
+      "reason": "no_api"
+    },
+    "requestCount": {
+      "availability": "reported"
+    },
+    "costUsd": {
+      "availability": "estimated",
+      "reason": "predict_time_times_rate"
+    },
+    "currency": {
+      "availability": "estimated",
+      "reason": "assumed_usd"
+    },
+    "latencyMs": {
+      "availability": "client_only"
+    },
+    "status": {
+      "availability": "reported"
+    }
+  },
+  "extraMetrics": {
+    "predictSeconds": {
+      "availability": "reported"
+    }
+  },
+  "actions": {
+    "models": "disabled",
+    "compare": "disabled",
+    "balance": "hidden"
+  },
+  "adapter": {
+    "mode": "native",
+    "usageSource": "replicate-activity"
+  },
+  "setup": {
+    "summaryKey": "providers.setupReplicate"
+  },
+  "notes": "One row per prediction with status; no token counts. Cost is predict_time x a configured per-second rate, marked estimated; predictions without a matching rate are skipped. 20-page sync cap."
+}

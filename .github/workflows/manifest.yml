@@ -1,0 +1,119 @@
+name: manifest
+
+# Validates, signs and publishes the provider catalog to GitHub Pages.
+#
+# Required repo secret: MANIFEST_SIGNING_KEY — the key JSON printed by
+# `npm run keygen` (the whole object, not just the private field).
+# Required repo setting: Settings → Pages → Source: GitHub Actions.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'providers/**'
+      - 'adapters/**'
+      - 'known-providers.json'
+      - 'emergency.json'
+      - 'scripts/**'
+      - 'package.json'
+      - '.github/workflows/manifest.yml'
+  workflow_dispatch:
+    inputs:
+      reason:
+        description: 'Why this manifest is being published (recorded in the run summary)'
+        required: false
+        type: string
+
+permissions:
+  contents: write # commit the bumped sequence.txt
+  pages: write
+  id-token: write
+
+concurrency:
+  group: manifest-release
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    outputs:
+      sequence: ${{ steps.seq.outputs.value }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Validate profiles
+        run: node scripts/validate.mjs
+
+      - name: Build payload
+        run: node scripts/build-manifest.mjs
+
+      - name: Sign
+        env:
+          MANIFEST_SIGNING_KEY: ${{ secrets.MANIFEST_SIGNING_KEY }}
+        run: node scripts/sign.mjs --expires-days 90
+
+      - name: Verify locally
+        env:
+          MANIFEST_SIGNING_KEY: ${{ secrets.MANIFEST_SIGNING_KEY }}
+        run: node scripts/verify-manifest.mjs
+
+      - name: Read sequence
+        id: seq
+        run: echo "value=$(cat sequence.txt | tr -d '[:space:]')" >> "$GITHUB_OUTPUT"
+
+      - name: Commit sequence counter
+        env:
+          SEQUENCE: ${{ steps.seq.outputs.value }}
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          if git diff --quiet sequence.txt; then
+            echo 'sequence.txt unchanged'
+            exit 0
+          fi
+          git add sequence.txt
+          git commit -m "chore: sequence ${SEQUENCE} [skip ci]"
+          git push
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: public
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - id: deployment
+        uses: actions/deploy-pages@v4
+
+      - name: Verify the deployed manifest
+        env:
+          MANIFEST_SIGNING_KEY: ${{ secrets.MANIFEST_SIGNING_KEY }}
+          PAGE_URL: ${{ steps.deployment.outputs.page_url }}
+          SEQUENCE: ${{ needs.build.outputs.sequence }}
+        run: |
+          # Pages can serve a stale copy right after a deploy; retry briefly and
+          # bust the edge cache with the sequence.
+          for attempt in 1 2 3 4 5; do
+            if curl -fsS "${PAGE_URL}manifest.json?v=${SEQUENCE}" -o deployed.json; then
+              break
+            fi
+            sleep 10
+          done
+          node scripts/verify-manifest.mjs --manifest deployed.json
+          SERVED=$(node -e "console.log(JSON.parse(require('fs').readFileSync('deployed.json','utf8')).sequence)")
+          if [ "$SERVED" != "$SEQUENCE" ]; then
+            echo "served sequence $SERVED, expected $SEQUENCE" >&2
+            exit 1
+          fi

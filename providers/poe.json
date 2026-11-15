@@ -1,0 +1,73 @@
+{
+  "id": "poe",
+  "displayName": "Poe",
+  "rev": 1,
+  "docsUrl": "https://creator.poe.com/docs/external-applications/openai-compatible-api",
+  "capabilities": {
+    "models": false,
+    "chat": true,
+    "usage": true,
+    "balance": true,
+    "keyUsage": false
+  },
+  "usage": {
+    "syncMode": "native",
+    "managementKeyRequired": false,
+    "granularity": "per-request",
+    "bucketTimezone": "utc",
+    "reportingLagHours": null,
+    "revisionWindowDays": 0,
+    "backfillMaxDays": 30,
+    "syncThrottleMinutes": 5,
+    "pagination": {
+      "kind": "cursor",
+      "maxPages": 20
+    }
+  },
+  "metrics": {
+    "inputTokens": {
+      "availability": "estimated",
+      "reason": "parsed_from_points"
+    },
+    "outputTokens": {
+      "availability": "estimated",
+      "reason": "parsed_from_points"
+    },
+    "cachedTokens": {
+      "availability": "not_supported",
+      "reason": "no_api"
+    },
+    "reasoningTokens": {
+      "availability": "not_supported",
+      "reason": "no_api"
+    },
+    "requestCount": {
+      "availability": "reported"
+    },
+    "costUsd": {
+      "availability": "reported"
+    },
+    "currency": {
+      "availability": "reported"
+    },
+    "latencyMs": {
+      "availability": "client_only"
+    },
+    "status": {
+      "availability": "client_only"
+    }
+  },
+  "actions": {
+    "models": "disabled",
+    "compare": "disabled",
+    "balance": "visible"
+  },
+  "adapter": {
+    "mode": "native",
+    "usageSource": "poe-activity"
+  },
+  "setup": {
+    "summaryKey": "providers.setupPoe"
+  },
+  "notes": "No model catalog. Token counts are parsed best-effort from the human-readable points breakdown and can be zero; cost per query is exact. One row per query, 30-day history, 100 per page."
+}

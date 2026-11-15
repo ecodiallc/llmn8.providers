@@ -1,0 +1,76 @@
+{
+  "id": "openai-compatible",
+  "displayName": "OpenAI-compatible",
+  "rev": 1,
+  "docsUrl": null,
+  "capabilities": {
+    "models": true,
+    "chat": true,
+    "usage": true,
+    "balance": false,
+    "keyUsage": false
+  },
+  "usage": {
+    "syncMode": "none",
+    "managementKeyRequired": false,
+    "granularity": "per-request",
+    "bucketTimezone": "utc",
+    "reportingLagHours": null,
+    "revisionWindowDays": 1,
+    "backfillMaxDays": 30,
+    "syncThrottleMinutes": 5,
+    "pagination": {
+      "kind": "none",
+      "maxPages": 1
+    }
+  },
+  "metrics": {
+    "inputTokens": {
+      "availability": "not_reported",
+      "reason": "endpoint_dependent"
+    },
+    "outputTokens": {
+      "availability": "not_reported",
+      "reason": "endpoint_dependent"
+    },
+    "cachedTokens": {
+      "availability": "not_reported",
+      "reason": "endpoint_dependent"
+    },
+    "reasoningTokens": {
+      "availability": "not_reported",
+      "reason": "endpoint_dependent"
+    },
+    "requestCount": {
+      "availability": "not_reported",
+      "reason": "endpoint_dependent"
+    },
+    "costUsd": {
+      "availability": "not_reported",
+      "reason": "endpoint_dependent"
+    },
+    "currency": {
+      "availability": "not_reported",
+      "reason": "endpoint_dependent"
+    },
+    "latencyMs": {
+      "availability": "client_only"
+    },
+    "status": {
+      "availability": "client_only"
+    }
+  },
+  "actions": {
+    "models": "enabled",
+    "compare": "enabled",
+    "balance": "hidden"
+  },
+  "adapter": {
+    "mode": "native",
+    "usageSource": "compatible-activity"
+  },
+  "setup": {
+    "summaryKey": "providers.setupCompatible"
+  },
+  "notes": "Everything depends on the user-configured baseUrl and optional usagePath, so the add-account flow promises app-tracked only until a usage path is set. Local endpoints record tokens at $0; remote endpoints need explicit allowRemote consent, which only the setup UI can set. Timestamps are preserved when the endpoint returns them."
+}

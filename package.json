@@ -1,0 +1,18 @@
+{
+  "name": "llmn8.providers",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Signed provider catalog for the Llmn8 app",
+  "type": "module",
+  "scripts": {
+    "validate": "node scripts/validate.mjs",
+    "build": "node scripts/build-manifest.mjs",
+    "sign": "node scripts/sign.mjs",
+    "verify": "node scripts/verify-manifest.mjs",
+    "release": "node scripts/release.mjs",
+    "keygen": "node scripts/gen-key.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

@@ -1,0 +1,71 @@
+{
+  "id": "openai",
+  "displayName": "OpenAI",
+  "rev": 1,
+  "docsUrl": "https://platform.openai.com/docs/api-reference/usage",
+  "capabilities": {
+    "models": true,
+    "chat": true,
+    "usage": true,
+    "balance": false,
+    "keyUsage": true
+  },
+  "usage": {
+    "syncMode": "admin-key",
+    "managementKeyRequired": true,
+    "granularity": "daily",
+    "bucketTimezone": "utc",
+    "reportingLagHours": null,
+    "revisionWindowDays": 1,
+    "backfillMaxDays": 30,
+    "syncThrottleMinutes": 5,
+    "pagination": {
+      "kind": "cursor",
+      "maxPages": 12
+    }
+  },
+  "metrics": {
+    "inputTokens": {
+      "availability": "reported"
+    },
+    "outputTokens": {
+      "availability": "reported"
+    },
+    "cachedTokens": {
+      "availability": "reported"
+    },
+    "reasoningTokens": {
+      "availability": "not_reported",
+      "reason": "provider_omits"
+    },
+    "requestCount": {
+      "availability": "reported"
+    },
+    "costUsd": {
+      "availability": "reported",
+      "allocation": "by_token_share"
+    },
+    "currency": {
+      "availability": "reported"
+    },
+    "latencyMs": {
+      "availability": "client_only"
+    },
+    "status": {
+      "availability": "client_only"
+    }
+  },
+  "actions": {
+    "models": "enabled",
+    "compare": "enabled",
+    "balance": "hidden"
+  },
+  "adapter": {
+    "mode": "native",
+    "usageSource": "openai-activity"
+  },
+  "setup": {
+    "summaryKey": "providers.setupOpenAI"
+  },
+  "notes": "Admin key (sk-admin-). Usage supports 1m/1h/1d buckets upstream, but the app requests 1d. Cost buckets are organization-wide and split across model rows by token share. No balance endpoint."
+}

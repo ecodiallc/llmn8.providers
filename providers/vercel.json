@@ -1,0 +1,70 @@
+{
+  "id": "vercel",
+  "displayName": "Vercel AI Gateway",
+  "rev": 1,
+  "docsUrl": "https://vercel.com/docs/ai-gateway",
+  "capabilities": {
+    "models": true,
+    "chat": true,
+    "usage": true,
+    "balance": true,
+    "keyUsage": true
+  },
+  "usage": {
+    "syncMode": "native",
+    "managementKeyRequired": false,
+    "granularity": "daily",
+    "bucketTimezone": "utc",
+    "reportingLagHours": null,
+    "revisionWindowDays": 1,
+    "backfillMaxDays": 30,
+    "syncThrottleMinutes": 5,
+    "pagination": {
+      "kind": "none",
+      "maxPages": 1
+    }
+  },
+  "metrics": {
+    "inputTokens": {
+      "availability": "reported"
+    },
+    "outputTokens": {
+      "availability": "reported"
+    },
+    "cachedTokens": {
+      "availability": "reported"
+    },
+    "reasoningTokens": {
+      "availability": "reported"
+    },
+    "requestCount": {
+      "availability": "reported"
+    },
+    "costUsd": {
+      "availability": "reported",
+      "allocation": "by_token_share"
+    },
+    "currency": {
+      "availability": "reported"
+    },
+    "latencyMs": {
+      "availability": "client_only"
+    },
+    "status": {
+      "availability": "client_only"
+    }
+  },
+  "actions": {
+    "models": "enabled",
+    "compare": "enabled",
+    "balance": "visible"
+  },
+  "adapter": {
+    "mode": "native",
+    "usageSource": "vercel-activity"
+  },
+  "setup": {
+    "summaryKey": "providers.setupVercel"
+  },
+  "notes": "Reporting API supports date_part=hour but the app requests day. One daily total is split across models by token volume. Pro/Enterprise beta, billed per query."
+}

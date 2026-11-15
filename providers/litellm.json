@@ -1,0 +1,71 @@
+{
+  "id": "litellm",
+  "displayName": "LiteLLM",
+  "rev": 1,
+  "docsUrl": "https://docs.litellm.ai/docs/proxy/cost_tracking",
+  "capabilities": {
+    "models": true,
+    "chat": true,
+    "usage": true,
+    "balance": false,
+    "keyUsage": false
+  },
+  "usage": {
+    "syncMode": "native",
+    "managementKeyRequired": false,
+    "granularity": "daily",
+    "bucketTimezone": "provider-local",
+    "reportingLagHours": null,
+    "revisionWindowDays": 1,
+    "backfillMaxDays": 30,
+    "syncThrottleMinutes": 5,
+    "pagination": {
+      "kind": "page",
+      "maxPages": 10
+    }
+  },
+  "metrics": {
+    "inputTokens": {
+      "availability": "reported"
+    },
+    "outputTokens": {
+      "availability": "reported"
+    },
+    "cachedTokens": {
+      "availability": "not_reported",
+      "reason": "provider_omits"
+    },
+    "reasoningTokens": {
+      "availability": "not_reported",
+      "reason": "provider_omits"
+    },
+    "requestCount": {
+      "availability": "reported"
+    },
+    "costUsd": {
+      "availability": "reported"
+    },
+    "currency": {
+      "availability": "reported"
+    },
+    "latencyMs": {
+      "availability": "client_only"
+    },
+    "status": {
+      "availability": "reported"
+    }
+  },
+  "actions": {
+    "models": "enabled",
+    "compare": "enabled",
+    "balance": "hidden"
+  },
+  "adapter": {
+    "mode": "native",
+    "usageSource": "litellm-activity"
+  },
+  "setup": {
+    "summaryKey": "providers.setupLiteLLM"
+  },
+  "notes": "Self-hosted proxy: base URL and key with spend-log access; remote proxies need consent. Spend logs are per request, but the adapter anchors each row to local midnight, so the time of day is lost and the provider is treated as daily. 1000 per page."
+}
