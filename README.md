@@ -16,6 +16,8 @@ only a fallback for a cold offline start or a rejected manifest.
 - Design and rationale: `notes/provider-manifest-design.md` in the app repo
 - Where the facts come from: `notes/provider-data-limitations.md` and
   `notes/provider-api-viability.md` in the app repo
+- Incidents: [RUNBOOKS.md](RUNBOOKS.md) — disable a provider in 10 minutes,
+  rotate the signing key, roll back a bad manifest
 
 > **This README is the process.** Follow it top to bottom for any update. Every
 > command runs from the repo root.
@@ -209,6 +211,9 @@ Edit `emergency.json` at the repo root (create it if absent):
 (cold start, foreground after 6 h, or a manual refresh). Remove the entry and
 publish again to re-enable. **Emergency entries do not lower the sequence** —
 they are just another published payload.
+
+The full incident procedure, including verification and recovery, is
+[runbook R1](RUNBOOKS.md#r1--a-provider-broke-disable-it-everywhere-in-under-10-minutes).
 
 ### "A new provider was added to the app"
 
