@@ -5,6 +5,7 @@
   "description": "Signed provider catalog for the Llmn8 app",
   "type": "module",
   "scripts": {
+    "contract-test": "node scripts/contract-test.mjs",
     "validate": "node scripts/validate.mjs",
     "build": "node scripts/build-manifest.mjs",
     "sign": "node scripts/sign.mjs",

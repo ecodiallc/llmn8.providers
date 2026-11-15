@@ -1,0 +1,69 @@
+{
+  "id": "usage-without-source",
+  "displayName": "LiteLLM",
+  "rev": 1,
+  "docsUrl": "https://docs.litellm.ai/docs/providers",
+  "capabilities": {
+    "models": true,
+    "chat": true,
+    "usage": true,
+    "balance": true,
+    "keyUsage": false
+  },
+  "usage": {
+    "syncMode": "native",
+    "managementKeyRequired": false,
+    "granularity": "daily",
+    "bucketTimezone": "utc",
+    "reportingLagHours": null,
+    "revisionWindowDays": 1,
+    "backfillMaxDays": 31,
+    "syncThrottleMinutes": 5,
+    "pagination": {
+      "kind": "page",
+      "maxPages": 4
+    }
+  },
+  "metrics": {
+    "inputTokens": {
+      "availability": "reported"
+    },
+    "outputTokens": {
+      "availability": "reported"
+    },
+    "cachedTokens": {
+      "availability": "reported"
+    },
+    "reasoningTokens": {
+      "availability": "reported"
+    },
+    "requestCount": {
+      "availability": "reported"
+    },
+    "costUsd": {
+      "availability": "reported"
+    },
+    "currency": {
+      "availability": "reported"
+    },
+    "latencyMs": {
+      "availability": "client_only"
+    },
+    "status": {
+      "availability": "client_only"
+    }
+  },
+  "actions": {
+    "models": "enabled",
+    "compare": "enabled",
+    "balance": "visible"
+  },
+  "adapter": {
+    "mode": "native",
+    "usageSource": null
+  },
+  "setup": {
+    "summaryKey": "providers.setupLiteLLM"
+  },
+  "notes": "Fixture: usage-without-source must be rejected by the contract. Not a real profile."
+}

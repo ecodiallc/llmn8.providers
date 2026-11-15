@@ -1,0 +1,14 @@
+{
+  "note": "Accept/reject corpus for the profile contract. `accept` entries must validate with zero errors; `reject` maps a fixture to the error text it must produce. Fixtures are synthetic profiles that borrow real provider ids so the id/filename and known-provider rules can be exercised; they are not the published profiles. Add a case here whenever you add a rule to scripts/contract.mjs.",
+  "accept": ["accept/litellm.json", "accept/poe.json"],
+  "reject": {
+    "reject/unknown-key.json": "unknown key \"colour\" (typo?)",
+    "reject/bad-availability.json": "\"sometimes\" is not one of reported | estimated | derived | client_only | not_reported | not_supported",
+    "reject/missing-notes.json": "missing \"notes\"",
+    "reject/models-without-catalog.json": "no model catalog, so actions.models must be \"disabled\"",
+    "reject/usage-without-source.json": "usage capability is true, so adapter.usageSource is required",
+    "reject/backfill-too-large.json": "usage.backfillMaxDays: integer 0..90",
+    "reject/id-mismatch.json": "must match the filename",
+    "reject/setup-missing-key.json": "setup: missing \"summaryKey\""
+  }
+}

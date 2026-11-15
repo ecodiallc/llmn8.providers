@@ -12,6 +12,7 @@ on:
     paths:
       - 'providers/**'
       - 'adapters/**'
+      - 'fixtures/**'
       - 'known-providers.json'
       - 'min-app-version.txt'
       - 'emergency.json'
@@ -42,9 +43,23 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Run summary
+        if: github.event_name == 'workflow_dispatch'
+        env:
+          REASON: ${{ inputs.reason }}
+        run: |
+          {
+            echo '### Manifest publish (manual)'
+            echo ''
+            echo "${REASON:-No reason given.}"
+          } >> "$GITHUB_STEP_SUMMARY"
+
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
+
+      - name: Contract tests
+        run: node scripts/contract-test.mjs
 
       - name: Validate profiles
         run: node scripts/validate.mjs

@@ -46,16 +46,19 @@ min-app-version.txt      oldest app version that reads the manifest (<= expo.ver
                          (the field contract is §3)
 scripts/
   lib.mjs                shared helpers (payload build, key handling)
-  validate.mjs           schema + cross-field checks
+  contract.mjs           the closed profile contract, as code
+  validate.mjs           runs the contract over providers/
+  contract-test.mjs      runs the contract over fixtures/profiles/
   build-manifest.mjs     providers/ -> build/payload.json
   sign.mjs               payload -> public/manifest.json (envelope)
   verify-manifest.mjs    verifies a manifest the way the app does
-  release.mjs            runs the four steps in order
+  release.mjs            runs all five steps in order
   gen-key.mjs            creates an Ed25519 keypair
+fixtures/profiles/       accept/reject corpus for the contract (cases.json)
 build/payload.json       generated, git-ignored, reviewable before signing
 public/manifest.json     generated, git-ignored, what gets served
 .keys/                   dev signing keys, git-ignored
-.github/workflows/       validate + sign + deploy on push to main
+.github/workflows/       contract tests + validate + sign + deploy on push to main
 ```
 
 The 16 provider profiles and `known-providers.json` were generated **once** from
@@ -236,13 +239,33 @@ way to make a provider sync less.
 ## 5. The pipeline
 
 ```bash
-npm run validate   # or: node scripts/validate.mjs
-npm run build      # or: node scripts/build-manifest.mjs
+npm run contract-test   # or: node scripts/contract-test.mjs
+npm run validate        # or: node scripts/validate.mjs
+npm run build           # or: node scripts/build-manifest.mjs
 npm run sign -- --key-file .keys/dev-2026-11.key
 npm run verify -- --key-file .keys/dev-2026-11.key
-# or all four:
+# or all five:
 npm run release
 ```
+
+### contract-test
+
+Runs the accept/reject corpus in `fixtures/profiles/` through
+`scripts/contract.mjs` — the exact function `validate` and CI use, so the corpus
+tests the real validator rather than a copy of it. `cases.json` lists the
+`accept` fixtures (must produce zero errors) and maps each `reject` fixture to
+the error it must produce.
+
+The contract is written twice: here, and in the app
+(`src/domain/providerProfile.ts`, and `manifest/schema.ts` from Phase 3). If the
+two drift, the app discards a manifest CI signed and every phone stays on the
+old baseline — the worst failure mode in this pipeline, because there is no
+error anywhere, only a publish that does nothing. Every rule added to
+`contract.mjs` needs a `reject` case, so a later loosening is visible in review.
+
+Fixtures are synthetic profiles that borrow real ids; the app repo has a
+matching test (`src/data/providers/__tests__/baselineContract.test.ts`) that
+checks the bundled baseline against the app's own half of the schema.
 
 ### validate
 
@@ -320,7 +343,12 @@ Refuses to run when:
   *higher* sequence);
 - `sequence.txt` already reached this sequence (`--allow-resign` overrides, for
   rebuilding after a failed verify);
-- `--expires-days` is outside 1..180.
+- `--expires-days` is outside 1..180;
+- the envelope would exceed the app's **700 KB** file cap (§4.5). The app
+  refuses to parse a manifest that big before doing any work, so signing one
+  publishes an update no phone will ever read. The 512 KB payload limit in
+  `build` is not the same bound: base64 adds a third, and the envelope adds the
+  signature fields. Nothing is written and `sequence.txt` is not advanced.
 
 Flags: `--expires-days 90` (default 90), `--out path`, `--no-bump`.
 
@@ -392,10 +420,15 @@ defaults to 90 days and manifests are re-signed monthly.
 ### Normal update (CI)
 
 1. Edit `providers/<id>.json` (bump `rev`).
-2. `npm run release` locally — fix anything `validate` complains about.
+2. `npm run release` locally — fix anything `contract-test` or `validate`
+   complains about.
 3. Commit `providers/`, `sequence.txt` (and `emergency.json` if changed).
-4. Push to `main`. CI re-runs validate → build → sign → verify, verifies the
-   **deployed** URL, and publishes to Pages.
+4. Push to `main`. CI re-runs contract-test → validate → build → sign → verify,
+   verifies the **deployed** URL, and publishes to Pages.
+
+`workflow_dispatch` runs the same path with an optional `reason`, which is
+written to the run summary — use it for emergency publishes so the Actions log
+says why.
 
 `public/manifest.json` and `build/` are git-ignored: CI builds and deploys them
 as a Pages artifact. Do not commit generated manifests.
@@ -466,6 +499,7 @@ provider file fails the build in CI rather than half-applying in the field.
 | `usage capability is true, so adapter.usageSource is required` | Give the source prefix the native adapter uses. |
 | `no model catalog, so actions.models must be "disabled"` | Capabilities and actions disagree; the validator keeps them honest. |
 | `sequence.txt is already N` | You rebuilt without changing anything. Edit a profile, or run `npm run build` normally (it increments). |
+| `refusing to write …: the envelope is N KB` | The signed file crossed the app's 700 KB cap; the app would ignore it. Trim profiles or `extraMetrics` — a profile is meant to be ≤ 16 KB. |
 | `refusing to publish sequence N` | The local `public/manifest.json` is newer than what you are signing. Delete it (it is git-ignored) or sign a higher sequence. |
 | `signature does not match the payload` on verify | Wrong key, or `public/manifest.json` was regenerated by other means. Re-run sign, then verify with the same key. |
 | App still shows the old profile | Pages cache (~10 min) + the app's 6 h foreground refresh. Use Settings → Check now, or append `?v=<sequence>` when testing. |
@@ -481,7 +515,8 @@ Same icons as the app's design doc: 🔲 not started · 🟡 in progress · ✅ 
 ```
 🔲 edit providers/<id>.json and bump rev
 🔲 note in `notes` what changed upstream and the date verified
-🔲 npm run release
+🔲 add or update a fixture in fixtures/profiles/ if the contract changed
+🔲 npm run release   (contract-test → validate → build → sign → verify)
 🔲 npm run verify   (after deploy, against the URL)
 🔲 commit providers/, sequence.txt, emergency.json if touched
 🔲 push to main; watch CI; confirm the served sequence incremented

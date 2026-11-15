@@ -27,7 +27,6 @@ import {
   publicKeyForApp,
   readKeyFile,
   readSequence,
-  writeJson,
 } from './lib.mjs';
 
 function arg(name, fallback) {
@@ -35,6 +34,14 @@ function arg(name, fallback) {
   return i >= 0 && process.argv[i + 1] ? process.argv[i + 1] : fallback;
 }
 const hasFlag = (name) => process.argv.includes(`--${name}`);
+
+/**
+ * The app refuses to parse a manifest file above 700 KB (design §4.5), before
+ * it spends work on base64 or JSON. That check is on the whole envelope on
+ * disk, so it is enforced here on the bytes written — the 512 KB payload cap in
+ * `build-manifest.mjs` does not bound the base64 copy plus the envelope.
+ */
+const MAX_MANIFEST_BYTES = 700 * 1024;
 
 const payloadPath = join(BUILD_DIR, 'payload.json');
 if (!existsSync(payloadPath)) fail('build/payload.json is missing — run `npm run build` first');
@@ -94,7 +101,15 @@ const envelope = {
 };
 
 mkdirSync(dirname(outPath), { recursive: true });
-writeJson(outPath, envelope);
+const envelopeText = JSON.stringify(envelope, null, 2) + '\n';
+const envelopeBytes = Buffer.byteLength(envelopeText, 'utf8');
+if (envelopeBytes > MAX_MANIFEST_BYTES) {
+  fail(
+    `refusing to write ${outPath}: the envelope is ${(envelopeBytes / 1024).toFixed(1)} KB, ` +
+      `over the app's ${MAX_MANIFEST_BYTES / 1024} KB pre-parse cap. Trim profiles or extraMetrics.`,
+  );
+}
+writeFileSync(outPath, envelopeText);
 
 if (!hasFlag('no-bump')) {
   writeFileSync(join(ROOT, 'sequence.txt'), `${Math.max(readSequence(), payload.sequence)}\n`);
@@ -104,7 +119,7 @@ log(`signed ${outPath}`);
 log(`  keyId      ${key.keyId}`);
 log(`  sequence   ${payload.sequence}`);
 log(`  expiresAt  ${envelope.expiresAt} (${expiresDays} d)`);
-log(`  size       ${(Buffer.byteLength(JSON.stringify(envelope)) / 1024).toFixed(1)} KB`);
+log(`  size       ${(envelopeBytes / 1024).toFixed(1)} KB`);
 log('');
 log('app public key (standard base64, paste into publicKeys.ts):');
 log(`  ${publicKeyForApp(key)}`);

@@ -1,0 +1,39 @@
+{
+  "id": "poe",
+  "displayName": "Poe",
+  "rev": 1,
+  "docsUrl": null,
+  "capabilities": {
+    "models": false,
+    "chat": true,
+    "usage": false,
+    "balance": true,
+    "keyUsage": false
+  },
+  "usage": {
+    "syncMode": "none",
+    "managementKeyRequired": false,
+    "granularity": "none",
+    "bucketTimezone": "utc",
+    "reportingLagHours": null,
+    "revisionWindowDays": 0,
+    "backfillMaxDays": 0,
+    "syncThrottleMinutes": 60,
+    "pagination": { "kind": "none", "maxPages": 1 }
+  },
+  "metrics": {
+    "inputTokens": { "availability": "not_reported", "reason": "no_api" },
+    "outputTokens": { "availability": "not_reported", "reason": "no_api" },
+    "cachedTokens": { "availability": "not_reported", "reason": "no_api" },
+    "reasoningTokens": { "availability": "not_reported", "reason": "no_api" },
+    "requestCount": { "availability": "not_supported", "reason": "no_api" },
+    "costUsd": { "availability": "not_reported", "reason": "no_api" },
+    "currency": { "availability": "not_reported", "reason": "no_api" },
+    "latencyMs": { "availability": "client_only" },
+    "status": { "availability": "client_only" }
+  },
+  "actions": { "models": "disabled", "compare": "disabled", "balance": "visible" },
+  "adapter": { "mode": "native", "usageSource": null },
+  "setup": { "summaryKey": "providers.setupPoe" },
+  "notes": "Fixture: a synthetic profile with no usage API, exercising the usage:false rules. Not the real providers/poe.json."
+}

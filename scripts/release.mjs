@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * Runs the whole pipeline in order, forwarding flags to each step:
- *   validate -> build -> sign -> verify
+ *   contract-test -> validate -> build -> sign -> verify
  *
  * Usage:
  *   node scripts/release.mjs --key-file .keys/dev-2026-11.key
@@ -16,6 +16,7 @@ import { join } from 'node:path';
 import { ROOT, log } from './lib.mjs';
 
 const steps = [
+  'scripts/contract-test.mjs',
   'scripts/validate.mjs',
   'scripts/build-manifest.mjs',
   'scripts/sign.mjs',
@@ -37,6 +38,7 @@ const KNOWN = new Set([
   '--allow-resign',
 ]);
 const SUPPORTED_BY = {
+  'scripts/contract-test.mjs': [],
   'scripts/validate.mjs': [],
   'scripts/build-manifest.mjs': ['--sequence', '--generated-at', '--min-app-version'],
   'scripts/sign.mjs': ['--key-file', '--expires-days', '--out', '--no-bump', '--allow-resign'],
