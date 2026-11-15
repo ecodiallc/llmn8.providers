@@ -5,13 +5,18 @@
  *
  * Usage:
  *   node scripts/build-manifest.mjs [--sequence N] [--generated-at ISO]
- *                                   [--min-app-version 1.0.0]
+ *                                   [--min-app-version 0.1.0]
  *
  * The sequence defaults to sequence.txt + 1. Pass --sequence to rebuild the
  * payload at a known sequence without touching the counter (handy when you only
  * want to diff two builds).
+ *
+ * minAppVersion defaults to the contents of min-app-version.txt, which holds the
+ * oldest app build that can read this payload. It must never exceed the app's
+ * current marketing version (`app.json` → `expo.version`), or every build treats
+ * the manifest as incompatible and silently stays on the bundled baseline.
  */
-import { mkdirSync, writeFileSync, existsSync } from 'node:fs';
+import { mkdirSync, writeFileSync, existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import {
   ROOT,
@@ -49,13 +54,30 @@ if (!Number.isInteger(sequence) || sequence < 1) fail('sequence must be an integ
 const generatedAt = arg('generated-at', new Date().toISOString());
 if (Number.isNaN(Date.parse(generatedAt))) fail(`--generated-at is not a date: ${generatedAt}`);
 
+function readMinAppVersion() {
+  const path = join(ROOT, 'min-app-version.txt');
+  if (!existsSync(path)) {
+    fail(
+      'min-app-version.txt is missing. It holds the oldest app version that reads ' +
+        'the manifest (the release that ships the loader), or pass --min-app-version.',
+    );
+  }
+  return readFileSync(path, 'utf8').trim();
+}
+
+const minAppVersionArg = arg('min-app-version');
+const minAppVersion = minAppVersionArg ?? readMinAppVersion();
+if (!/^\d+\.\d+\.\d+$/.test(minAppVersion)) {
+  fail(`minAppVersion "${minAppVersion}" must be a plain semver like 0.1.0`);
+}
+
 const payload = buildPayload({
   generatedAt,
   sequence,
   profiles,
   adapters,
   emergency,
-  minAppVersion: arg('min-app-version', '1.0.0'),
+  minAppVersion,
 });
 
 mkdirSync(BUILD_DIR, { recursive: true });
