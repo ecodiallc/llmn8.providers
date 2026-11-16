@@ -59,6 +59,7 @@ scripts/
 fixtures/profiles/       accept/reject corpus for the contract (cases.json)
 build/payload.json       generated, git-ignored, reviewable before signing
 public/manifest.json     generated, git-ignored, what gets served
+public/index.html        static landing page, committed, served at the site root
 .keys/                   dev signing keys, git-ignored
 .github/workflows/       contract tests + validate + sign + deploy on push to main
 ```
@@ -436,7 +437,9 @@ written to the run summary — use it for emergency publishes so the Actions log
 says why.
 
 `public/manifest.json` and `build/` are git-ignored: CI builds and deploys them
-as a Pages artifact. Do not commit generated manifests.
+as a Pages artifact. Do not commit generated manifests. `public/index.html` **is**
+committed — it is the static landing page at the site root, and pushing a change
+to it redeploys Pages.
 
 `sequence.txt` **is** committed — it is the counter CI reads to pick the next
 sequence.

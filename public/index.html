@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Llmn8 Provider Catalog</title>
+  <meta name="description" content="Signed provider catalog served to the Llmn8 app. Machine-readable manifest, one profile per provider." />
+  <style>
+    :root {
+      --bg: #f7f7f8;
+      --surface: #ffffff;
+      --text: #17171a;
+      --muted: #5f5f6a;
+      --border: #e3e3e8;
+      --accent: #2f5fd0;
+      --accent-text: #ffffff;
+      --chip: #f0f0f3;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #111113;
+        --surface: #1a1a1d;
+        --text: #f1f1f4;
+        --muted: #a3a3ad;
+        --border: #2c2c31;
+        --accent: #7aa2ff;
+        --accent-text: #0b0b0d;
+        --chip: #242429;
+      }
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font: 16px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    main {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 48px 16px 64px;
+    }
+    h1 {
+      font-size: clamp(1.6rem, 4vw, 2.1rem);
+      line-height: 1.2;
+      margin: 0 0 8px;
+      letter-spacing: -0.02em;
+    }
+    p.lede {
+      color: var(--muted);
+      margin: 0 0 24px;
+      max-width: 58ch;
+    }
+    a.button {
+      display: inline-block;
+      background: var(--accent);
+      color: var(--accent-text);
+      text-decoration: none;
+      font-weight: 600;
+      padding: 10px 18px;
+      border-radius: 10px;
+    }
+    a.button:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 3px;
+    }
+    section {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 20px;
+      margin-top: 24px;
+    }
+    h2 {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--muted);
+      margin: 0 0 12px;
+      font-weight: 600;
+    }
+    dl {
+      display: grid;
+      grid-template-columns: minmax(120px, max-content) 1fr;
+      gap: 8px 16px;
+      margin: 0;
+      font-size: 0.95rem;
+    }
+    dt { color: var(--muted); }
+    dd { margin: 0; overflow-wrap: anywhere; }
+    #providers {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+    #providers li {
+      background: var(--chip);
+      border-radius: 999px;
+      padding: 4px 12px;
+      font-size: 0.85rem;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    }
+    .note {
+      color: var(--muted);
+      font-size: 0.85rem;
+      margin: 12px 0 0;
+    }
+    footer {
+      color: var(--muted);
+      font-size: 0.85rem;
+      margin-top: 32px;
+    }
+    footer a { color: inherit; }
+    code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 0.85em;
+      background: var(--chip);
+      border-radius: 4px;
+      padding: 1px 5px;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Llmn8 Provider Catalog</h1>
+    <p class="lede">
+      A signed, versioned catalog of provider profiles. The Llmn8 app fetches the
+      manifest, verifies its Ed25519 signature, and applies provider and adapter
+      changes without shipping a new build.
+    </p>
+
+    <a class="button" href="manifest.json">Open manifest.json</a>
+
+    <section aria-labelledby="envelope-heading">
+      <h2 id="envelope-heading">Current envelope</h2>
+      <dl id="envelope">
+        <dt>Status</dt><dd id="env-status">Loading…</dd>
+      </dl>
+      <p class="note">
+        These values are read live from <code>manifest.json</code>.
+      </p>
+    </section>
+
+    <section aria-labelledby="providers-heading">
+      <h2 id="providers-heading">Providers</h2>
+      <ul id="providers">
+        <li>Loading…</li>
+      </ul>
+    </section>
+
+    <footer>
+      Source and update procedure:
+      <a href="https://github.com/ecodiallc/llmn8.providers">ecodiallc/llmn8.providers</a>.
+    </footer>
+  </main>
+
+  <script>
+    (function () {
+      var ROWS = [
+        ['Sequence', function (e) { return String(e.sequence); }],
+        ['Key ID', function (e) { return e.keyId; }],
+        ['Schema', function (e) { return String(e.schemaVersion); }],
+        ['Issued', function (e) { return e.issuedAt; }],
+        ['Expires', function (e) { return e.expiresAt; }],
+        ['Minimum app', function (e) { return e.minAppVersion || '—'; }]
+      ];
+
+      function row(label, value) {
+        var dt = document.createElement('dt');
+        dt.textContent = label;
+        var dd = document.createElement('dd');
+        dd.textContent = value;
+        return [dt, dd];
+      }
+
+      function decodePayload(b64) {
+        var bytes = Uint8Array.from(atob(b64), function (c) { return c.charCodeAt(0); });
+        return JSON.parse(new TextDecoder().decode(bytes));
+      }
+
+      function render(envelope, payload) {
+        var dl = document.getElementById('envelope');
+        dl.textContent = '';
+        ROWS.forEach(function (entry) {
+          var pair = row(entry[0], entry[1](envelope));
+          dl.appendChild(pair[0]);
+          dl.appendChild(pair[1]);
+        });
+
+        var list = document.getElementById('providers');
+        list.textContent = '';
+        Object.keys(payload.providers || {}).sort().forEach(function (id) {
+          var li = document.createElement('li');
+          li.textContent = id;
+          list.appendChild(li);
+        });
+      }
+
+      fetch('manifest.json', { cache: 'no-store' })
+        .then(function (res) {
+          if (!res.ok) throw new Error('HTTP ' + res.status);
+          return res.json();
+        })
+        .then(function (envelope) {
+          var payload = decodePayload(envelope.payload);
+          render(envelope, payload);
+        })
+        .catch(function (err) {
+          var dl = document.getElementById('envelope');
+          dl.textContent = '';
+          var pair = row('Status', 'Could not read manifest.json (' + err.message + ')');
+          dl.appendChild(pair[0]);
+          dl.appendChild(pair[1]);
+          var list = document.getElementById('providers');
+          list.textContent = '';
+          var li = document.createElement('li');
+          li.textContent = 'Unavailable';
+          list.appendChild(li);
+        });
+    })();
+  </script>
+</body>
+</html>

@@ -16,6 +16,7 @@ on:
       - 'known-providers.json'
       - 'min-app-version.txt'
       - 'emergency.json'
+      - 'public/**'
       - 'scripts/**'
       - 'package.json'
       - '.github/workflows/manifest.yml'
